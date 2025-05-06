@@ -35,8 +35,10 @@ import pybullet
 import pybullet_data as pd
 
 from retarget_utils import *
-import retarget_config as config
+# import retarget_config_a1 as config
+import retarget_config_go2 as config
 
+# total ouput size: 61
 POS_SIZE = 3
 ROT_SIZE = 4
 JOINT_POS_SIZE = 12
@@ -60,6 +62,7 @@ REF_ROOT_ROT = transformations.quaternion_from_euler(0, 0, 0.47 * np.pi)  #
 REF_PELVIS_JOINT_ID = 0
 REF_NECK_JOINT_ID = 3
 
+# this id is for reference real dog? 
 REF_TOE_JOINT_IDS = [10, 15, 19, 23]
 REF_HIP_JOINT_IDS = [6, 11, 16, 20]
 
@@ -314,10 +317,11 @@ def retarget_root_pose(ref_joint_pos):
 def retarget_pose(robot, default_pose, ref_joint_pos):
     # 获取关节限制
     joint_lim_low, joint_lim_high = get_joint_limits(robot)
-    joint_lim_low = [i * -1 for i in joint_lim_high]
-    joint_lim_high = [i * -1 for i in joint_lim_high]
+    # joint_lim_low = [i * -1 for i in joint_lim_high]
+    # joint_lim_high = [i * -1 for i in joint_lim_high]
     # print(joint_lim_low)
     # print(joint_lim_high)
+    # input()
 
     root_pos, root_rot = retarget_root_pose(ref_joint_pos)
     root_pos += config.SIM_ROOT_OFFSET
@@ -341,7 +345,19 @@ def retarget_pose(robot, default_pose, ref_joint_pos):
         hip_link_state = pybullet.getLinkState(
             robot, sim_hip_id, computeForwardKinematics=True
         )
-        sim_hip_pos = np.array(hip_link_state[4])
+        sim_hip_pos = np.array(hip_link_state[4]) # hip link COM
+
+        # test
+        # sim_toe_id = config.SIM_TOE_JOINT_IDS[i]
+        # toe_link_state = pybullet.getLinkState(
+        #     robot, sim_toe_id, computeForwardKinematics=True
+        # )
+        # sim_toe_pos = np.array(toe_link_state[4]) # toe link COM
+
+        # print("sim hip pos: ")
+        # print(sim_hip_pos)
+        # print("sim toe pos: ")
+        # print(sim_toe_pos)
 
         toe_offset_world = pose3d.QuaternionRotatePoint(toe_offset_local, heading_rot)
 
@@ -351,6 +367,14 @@ def retarget_pose(robot, default_pose, ref_joint_pos):
         sim_tar_toe_pos += toe_offset_world
 
         tar_toe_pos.append(sim_tar_toe_pos)
+        # print("tar toe pos: ")
+        # print(tar_toe_pos)
+    #check id
+    # num_joints = pybullet.getNumJoints(robot)
+    # for i in range(num_joints):
+    #     info = pybullet.getJointInfo(robot, i)
+    #     print(f"Joint Index: {i}, Name: {info[1].decode()}, Link Name: {info[12].decode()}")
+
 
     joint_pose = pybullet.calculateInverseKinematics2(
         robot,
@@ -362,7 +386,10 @@ def retarget_pose(robot, default_pose, ref_joint_pos):
         restPoses=default_pose,
     )
     joint_pose = np.array(joint_pose)
-    # print(joint_pose)
+
+    # print(config.SIM_TOE_JOINT_IDS)
+    # print(sim_hip_pos)
+    # input()
 
     tar_toe_pos_local = np.squeeze(
         np.concatenate(
@@ -416,6 +443,9 @@ def retarget_motion(robot, joint_pos_data):
         # ref_joint_pos = process_ref_joint_pos_data(ref_joint_pos)
         curr_pose = retarget_pose(robot, config.DEFAULT_JOINT_POSE, ref_joint_pos)
         set_pose(robot, curr_pose)
+
+        # print(curr_pose)
+        # input()
 
         # Next robot pose.
         next_ref_joint_pos = joint_pos_data[f + 1]
@@ -587,6 +617,10 @@ def main(argv):
 
                 f_idx = f % num_frames
                 print("Frame {:d}".format(f_idx))
+
+                # print(joint_pos_data)
+                # print(retarget_frames[f_idx])
+                # input()
 
                 ref_joint_pos = joint_pos_data[f_idx]
                 # ref_joint_pos = np.reshape(ref_joint_pos, [-1, POS_SIZE])
