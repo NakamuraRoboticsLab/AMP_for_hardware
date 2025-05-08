@@ -362,6 +362,7 @@ def retarget_pose(robot, default_pose, ref_joint_pos):
         toe_offset_world = pose3d.QuaternionRotatePoint(toe_offset_local, heading_rot)
 
         ref_hip_toe_delta = ref_toe_pos - ref_hip_pos
+        ref_hip_toe_delta = (ref_toe_pos - ref_hip_pos) * 1.1  # 增加 10% 的距离
         sim_tar_toe_pos = sim_hip_pos + ref_hip_toe_delta
         sim_tar_toe_pos[2] = ref_toe_pos[2]
         sim_tar_toe_pos += toe_offset_world

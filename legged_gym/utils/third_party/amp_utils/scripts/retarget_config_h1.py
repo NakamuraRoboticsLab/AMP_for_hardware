@@ -13,12 +13,12 @@ INIT_ROT = np.array([0, 0.70710678, 0, 0.70710678])
 
 SIM_TOE_JOINT_IDS = [18, 14, 9, 4] # FR FL HR HL
 SIM_HIP_JOINT_IDS = [15, 11, 5, 0]
-SIM_ROOT_OFFSET = np.array([0, 0, -0.04])
+SIM_ROOT_OFFSET = np.array([0, 0, 0.1])
 SIM_TOE_OFFSET_LOCAL = [
-    np.array([0.0, -0.06, 0.0]),
-    np.array([0.0, 0.06, 0.0]),
-    np.array([0.0, -0.06, 0.0]),
-    np.array([0.0, 0.06, 0.0])
+    np.array([0.0, -0.06, -0.05]),
+    np.array([0.0, 0.06, -0.05]),
+    np.array([0.0, -0.06, 0.05]),
+    np.array([0.0, 0.06, 0.05])
 ]
 TOE_HEIGHT_OFFSET = 0.02
 
@@ -39,8 +39,8 @@ FORWARD_DIR_OFFSET = np.array([0, 0, 0])
 
 FR_FOOT_NAME = "right_elbow_link"
 FL_FOOT_NAME = "left_elbow_link"
-HR_FOOT_NAME = "left_ankle_link"
-HL_FOOT_NAME = "right_ankle_link"
+HR_FOOT_NAME = "right_ankle_link"
+HL_FOOT_NAME = "left_ankle_link"
 TORSO_NAME = "torso_link"
 
 MOCAP_MOTIONS = [
