@@ -37,6 +37,9 @@ from legged_gym.envs.go2.go2_config import GO2RoughCfg, GO2RoughCfgPPO
 from legged_gym.envs.h1.h1_config import H1RoughCfg, H1RoughCfgPPO
 from legged_gym.envs.h1.h1_env import H1Robot
 from .go2.go2_amp_config import GO2AMPCfg, GO2AMPCfgPPO
+from legged_gym.envs.h1_2.h1_2_config import H1_2RoughCfg, H1_2RoughCfgPPO
+from legged_gym.envs.h1_2.h1_2_env import H1_2Robot
+from .h1_2.h1_2_amp_config import H1_2AMPCfg, H1_2AMPCfgPPO
 
 
 import os
@@ -48,3 +51,5 @@ task_registry.register( "a1_amp", LeggedRobot, A1AMPCfg(), A1AMPCfgPPO() )
 task_registry.register( "go2", LeggedRobot, GO2RoughCfg(), GO2RoughCfgPPO())
 task_registry.register( "h1", H1Robot, H1RoughCfg(), H1RoughCfgPPO())
 task_registry.register( "go2_amp", LeggedRobot, GO2AMPCfg(), GO2AMPCfgPPO() )
+task_registry.register( "h1_2", H1_2Robot, H1_2RoughCfg(), H1_2RoughCfgPPO())
+task_registry.register( "h1_2_amp", H1_2Robot, H1_2AMPCfg(), H1_2AMPCfgPPO() )

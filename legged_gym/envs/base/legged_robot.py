@@ -564,6 +564,31 @@ class LeggedRobot(BaseTask):
             self.command_ranges["lin_vel_x"][1] = np.clip(self.command_ranges["lin_vel_x"][1] + 0.5, 0., self.cfg.commands.max_curriculum)
 
 
+    # def _get_noise_scale_vec(self, cfg):
+    #     """ Sets a vector used to scale the noise added to the observations.
+    #         [NOTE]: Must be adapted when changing the observations structure
+
+    #     Args:
+    #         cfg (Dict): Environment config file
+
+    #     Returns:
+    #         [torch.Tensor]: Vector of scales used to multiply a uniform distribution in [-1, 1]
+    #     """
+    #     noise_vec = torch.zeros_like(self.privileged_obs_buf[0])
+    #     self.add_noise = self.cfg.noise.add_noise
+    #     noise_scales = self.cfg.noise.noise_scales
+    #     noise_level = self.cfg.noise.noise_level
+    #     noise_vec[:3] = noise_scales.lin_vel * noise_level * self.obs_scales.lin_vel
+    #     noise_vec[3:6] = noise_scales.ang_vel * noise_level * self.obs_scales.ang_vel
+    #     noise_vec[6:9] = noise_scales.gravity * noise_level
+    #     noise_vec[9:12] = 0. # commands
+    #     noise_vec[12:24] = noise_scales.dof_pos * noise_level * self.obs_scales.dof_pos
+    #     noise_vec[24:36] = noise_scales.dof_vel * noise_level * self.obs_scales.dof_vel
+    #     noise_vec[36:48] = 0. # previous actions
+    #     if self.cfg.terrain.measure_heights:
+    #         noise_vec[48:235] = noise_scales.height_measurements* noise_level * self.obs_scales.height_measurements
+    #     return noise_vec
+
     def _get_noise_scale_vec(self, cfg):
         """ Sets a vector used to scale the noise added to the observations.
             [NOTE]: Must be adapted when changing the observations structure
@@ -574,19 +599,19 @@ class LeggedRobot(BaseTask):
         Returns:
             [torch.Tensor]: Vector of scales used to multiply a uniform distribution in [-1, 1]
         """
-        noise_vec = torch.zeros_like(self.privileged_obs_buf[0])
+        noise_vec = torch.zeros_like(self.obs_buf[0])
         self.add_noise = self.cfg.noise.add_noise
         noise_scales = self.cfg.noise.noise_scales
         noise_level = self.cfg.noise.noise_level
-        noise_vec[:3] = noise_scales.lin_vel * noise_level * self.obs_scales.lin_vel
-        noise_vec[3:6] = noise_scales.ang_vel * noise_level * self.obs_scales.ang_vel
-        noise_vec[6:9] = noise_scales.gravity * noise_level
-        noise_vec[9:12] = 0. # commands
-        noise_vec[12:24] = noise_scales.dof_pos * noise_level * self.obs_scales.dof_pos
-        noise_vec[24:36] = noise_scales.dof_vel * noise_level * self.obs_scales.dof_vel
-        noise_vec[36:48] = 0. # previous actions
-        if self.cfg.terrain.measure_heights:
-            noise_vec[48:235] = noise_scales.height_measurements* noise_level * self.obs_scales.height_measurements
+        noise_vec[:3] = noise_scales.ang_vel * noise_level * self.obs_scales.ang_vel
+        noise_vec[3:6] = noise_scales.gravity * noise_level
+        noise_vec[6] = 0.
+        noise_vec[7] = 0. #commands
+        noise_vec[8:8+self.num_dof] = noise_scales.dof_pos * noise_level * self.obs_scales.dof_pos
+        noise_vec[8+self.num_dof:8+self.num_dof*2] = noise_scales.dof_vel * noise_level * self.obs_scales.dof_vel
+        noise_vec[8+self.num_dof*2:8+self.num_dof*3] = 0.0
+        noise_vec[8+self.num_dof*3:8+self.num_dof*3+2] = 0. 
+
         return noise_vec
 
     #----------------------------------------
@@ -688,13 +713,30 @@ class LeggedRobot(BaseTask):
         off_y = torch.cos(theta_ab) * off_y_hip - torch.sin(theta_ab) * off_z_hip
         off_z = torch.sin(theta_ab) * off_y_hip + torch.cos(theta_ab) * off_z_hip
         return torch.stack([off_x, off_y, off_z], dim=-1)
+    
+    # def _get_rigid_body_pos(self, body_name):
+    #     body_list = self.gym.get_actor_rigid_body_names(self.envs[0], self.actor_handles[0])
+    #     # assert len(body_list) == 21
+    #     self.gym.refresh_rigid_body_state_tensor(self.sim)
+    #     return gymtorch.wrap_tensor(self.gym.acquire_rigid_body_state_tensor(self.sim))[body_list.index(body_name)::len(body_list),:3]
+
+    # def foot_positions_in_base_frame(self, foot_angles):
+    #     foot_positions = torch.zeros_like(foot_angles)
+    #     for i in range(4):
+    #         foot_positions[:, i * 3:i * 3 + 3].copy_(
+    #             self.foot_position_in_hip_frame(foot_angles[:, i * 3: i * 3 + 3], l_hip_sign=(-1)**(i)))
+    #     foot_positions = foot_positions + HIP_OFFSETS.reshape(12,).to(self.device)
+    #     return foot_positions
 
     def foot_positions_in_base_frame(self, foot_angles):
-        foot_positions = torch.zeros_like(foot_angles)
-        for i in range(4):
-            foot_positions[:, i * 3:i * 3 + 3].copy_(
-                self.foot_position_in_hip_frame(foot_angles[:, i * 3: i * 3 + 3], l_hip_sign=(-1)**(i)))
-        foot_positions = foot_positions + HIP_OFFSETS.reshape(12,).to(self.device)
+        # foot_positions = torch.zeros_like(foot_angles)
+        foot_positions = torch.zeros(self.num_envs, 12, dtype=torch.float, device=self.device)
+
+        # for i in range(4):
+        #     foot_positions[:, i * 3:i * 3 + 3].copy_(
+        #         self.foot_position_in_hip_frame(foot_angles[:, i * 3: i * 3 + 3], l_hip_sign=(-1)**(i)))
+        # foot_positions = foot_positions + HIP_OFFSETS.reshape(12,).to(self.device)
+
         return foot_positions
 
     def _prepare_reward_function(self):

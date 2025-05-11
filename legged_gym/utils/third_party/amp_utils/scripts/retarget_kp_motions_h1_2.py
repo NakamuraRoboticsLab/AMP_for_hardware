@@ -38,7 +38,7 @@ from retarget_utils import *
 # import retarget_config_a1 as config
 import retarget_config_h1_2 as config
 
-# total ouput size: 61
+# total ouput size: 79
 POS_SIZE = 3
 ROT_SIZE = 4
 JOINT_POS_SIZE = 21
