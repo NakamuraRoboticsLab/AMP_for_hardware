@@ -146,6 +146,7 @@ class LeggedRobot(BaseTask):
         """
         self.gym.refresh_actor_root_state_tensor(self.sim)
         self.gym.refresh_net_contact_force_tensor(self.sim)
+        self.gym.refresh_rigid_body_state_tensor(self.sim) # does view need update? 
 
         self.episode_length_buf += 1
         self.common_step_counter += 1
@@ -622,16 +623,24 @@ class LeggedRobot(BaseTask):
         actor_root_state = self.gym.acquire_actor_root_state_tensor(self.sim)
         dof_state_tensor = self.gym.acquire_dof_state_tensor(self.sim)
         net_contact_forces = self.gym.acquire_net_contact_force_tensor(self.sim)
+        rigid_body_state_tensor = self.gym.acquire_rigid_body_state_tensor(self.sim)
+
         self.gym.refresh_dof_state_tensor(self.sim)
         self.gym.refresh_actor_root_state_tensor(self.sim)
         self.gym.refresh_net_contact_force_tensor(self.sim)
+        self.gym.refresh_rigid_body_state_tensor(self.sim)
 
         # create some wrapper tensors for different slices
         self.root_states = gymtorch.wrap_tensor(actor_root_state)
         self.dof_state = gymtorch.wrap_tensor(dof_state_tensor)
+        
+        # self.rigid_body_states = gymtorch.wrap_tensor(rigid_body_state_tensor).view(self.num_envs, -1, 13)
         self.dof_pos = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 1]
         self.base_quat = self.root_states[:, 3:7]
+
+        self.rigid_body_states = gymtorch.wrap_tensor(rigid_body_state_tensor)
+        self.rigid_body_state_view = self.rigid_body_states.view(self.num_envs, -1, 13)
 
         self.contact_forces = gymtorch.wrap_tensor(net_contact_forces).view(self.num_envs, -1, 3) # shape: num_envs, num_bodies, xyz axis
 
@@ -730,14 +739,33 @@ class LeggedRobot(BaseTask):
 
     def foot_positions_in_base_frame(self, foot_angles):
         # foot_positions = torch.zeros_like(foot_angles)
-        foot_positions = torch.zeros(self.num_envs, 12, dtype=torch.float, device=self.device)
+        all_positions = torch.zeros(self.num_envs, 12, dtype=torch.float, device=self.device)
 
-        # for i in range(4):
-        #     foot_positions[:, i * 3:i * 3 + 3].copy_(
-        #         self.foot_position_in_hip_frame(foot_angles[:, i * 3: i * 3 + 3], l_hip_sign=(-1)**(i)))
-        # foot_positions = foot_positions + HIP_OFFSETS.reshape(12,).to(self.device)
+        # print(self.root_states.shape)
+        # print(all_positions.shape)
+        # input()
+        
+        feet_pos = self.rigid_body_state_view[:, self.feet_indices, :3]
+        hand_pos = self.rigid_body_state_view[:, self.hand_indices, :3]
 
-        return foot_positions
+        # 获取基座位置和方向
+        base_pos = self.root_states[:, :3].unsqueeze(1)  # [num_envs, 1, 3]
+        base_quat = self.root_states[:, 3:7]  # [num_envs, 4]
+
+        # 计算脚部相对于基座的位移
+        relative_foot_pos = feet_pos - base_pos  # [num_envs, num_feet, 3]
+        relative_hand_pos = hand_pos - base_pos  # [num_envs, num_hand, 3]
+
+        # 将位移旋转到基座坐标系
+        foot_positions = quat_rotate_inverse(base_quat, relative_foot_pos[:, 0, :])  # [num_envs, num_feet, 3]
+        foot_positions = torch.cat((foot_positions, quat_rotate_inverse(base_quat, relative_foot_pos[:, 1, :])), dim=1)
+
+        hand_positions = quat_rotate_inverse(base_quat, relative_hand_pos[:, 0, :])
+        hand_positions = torch.cat((hand_positions, quat_rotate_inverse(base_quat, relative_hand_pos[:, 1, :])), dim=1)
+        # 将 foot_positions 和 hand_positions 合并到同一个张量中
+        all_positions = torch.cat((hand_positions, foot_positions), dim=1)
+
+        return all_positions
 
     def _prepare_reward_function(self):
         """ Prepares a list of reward functions, whcih will be called to compute the total reward.
@@ -849,6 +877,8 @@ class LeggedRobot(BaseTask):
         self.num_bodies = len(body_names)
         self.num_dofs = len(self.dof_names)
         feet_names = [s for s in body_names if self.cfg.asset.foot_name in s]
+        # hand_names = [s for s in body_names if self.cfg.asset.hand_name in s]
+        hand_names = ["L_hand_base_link", "R_hand_base_link"]
         penalized_contact_names = []
         for name in self.cfg.asset.penalize_contacts_on:
             penalized_contact_names.extend([s for s in body_names if name in s])
@@ -887,6 +917,10 @@ class LeggedRobot(BaseTask):
         self.feet_indices = torch.zeros(len(feet_names), dtype=torch.long, device=self.device, requires_grad=False)
         for i in range(len(feet_names)):
             self.feet_indices[i] = self.gym.find_actor_rigid_body_handle(self.envs[0], self.actor_handles[0], feet_names[i])
+        
+        self.hand_indices = torch.zeros(len(hand_names), dtype=torch.long, device=self.device, requires_grad=False)
+        for i in range(len(hand_names)):
+            self.hand_indices[i] = self.gym.find_actor_rigid_body_handle(self.envs[0], self.actor_handles[0], hand_names[i])
 
         self.penalised_contact_indices = torch.zeros(len(penalized_contact_names), dtype=torch.long, device=self.device, requires_grad=False)
         for i in range(len(penalized_contact_names)):
@@ -943,7 +977,7 @@ class LeggedRobot(BaseTask):
         if not self.terrain.cfg.measure_heights:
             return
         self.gym.clear_lines(self.viewer)
-        self.gym.refresh_rigid_body_state_tensor(self.sim)
+        # self.gym.refresh_rigid_body_state_tensor(self.sim)
         sphere_geom = gymutil.WireframeSphereGeometry(0.02, 4, 4, None, color=(1, 1, 0))
         for i in range(self.num_envs):
             base_pos = (self.root_states[i, :3]).cpu().numpy()
