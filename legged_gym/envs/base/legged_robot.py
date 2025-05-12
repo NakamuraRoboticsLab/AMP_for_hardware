@@ -751,6 +751,10 @@ class LeggedRobot(BaseTask):
         
         feet_pos = self.rigid_body_state_view[:, self.feet_indices, :3]
         hand_pos = self.rigid_body_state_view[:, self.hand_indices, :3]
+        torso_pos = self.rigid_body_state_view[:, self.torso_indices, :3]
+        torso_rot = self.rigid_body_state_view[:, self.torso_indices, 3:7]
+        # 提取 torso_rot 的四元数部分
+        torso_rot_quat = torso_rot[:, 0, :4]
 
         # 获取基座位置和方向
         base_pos = self.root_states[:, :3].unsqueeze(1)  # [num_envs, 1, 3]
@@ -758,14 +762,14 @@ class LeggedRobot(BaseTask):
 
         # 计算脚部相对于基座的位移
         relative_foot_pos = feet_pos - base_pos  # [num_envs, num_feet, 3]
-        relative_hand_pos = hand_pos - base_pos  # [num_envs, num_hand, 3]
+        relative_hand_pos = hand_pos - torso_pos  # [num_envs, num_hand, 3]
 
         # 将位移旋转到基座坐标系
         foot_positions = quat_rotate_inverse(base_quat, relative_foot_pos[:, 0, :])  # [num_envs, num_feet, 3]
         foot_positions = torch.cat((foot_positions, quat_rotate_inverse(base_quat, relative_foot_pos[:, 1, :])), dim=1)
 
-        hand_positions = quat_rotate_inverse(base_quat, relative_hand_pos[:, 0, :])
-        hand_positions = torch.cat((hand_positions, quat_rotate_inverse(base_quat, relative_hand_pos[:, 1, :])), dim=1)
+        hand_positions = quat_rotate_inverse(torso_rot_quat, relative_hand_pos[:, 0, :])
+        hand_positions = torch.cat((hand_positions, quat_rotate_inverse(torso_rot_quat, relative_hand_pos[:, 1, :])), dim=1)
         # 将 foot_positions 和 hand_positions 合并到同一个张量中
         all_positions = torch.cat((hand_positions, foot_positions), dim=1)
 
@@ -883,6 +887,7 @@ class LeggedRobot(BaseTask):
         feet_names = [s for s in body_names if self.cfg.asset.foot_name in s]
         # hand_names = [s for s in body_names if self.cfg.asset.hand_name in s]
         hand_names = ["L_hand_base_link", "R_hand_base_link"]
+        torso_names = ["torso_link"]
         penalized_contact_names = []
         for name in self.cfg.asset.penalize_contacts_on:
             penalized_contact_names.extend([s for s in body_names if name in s])
@@ -925,6 +930,10 @@ class LeggedRobot(BaseTask):
         self.hand_indices = torch.zeros(len(hand_names), dtype=torch.long, device=self.device, requires_grad=False)
         for i in range(len(hand_names)):
             self.hand_indices[i] = self.gym.find_actor_rigid_body_handle(self.envs[0], self.actor_handles[0], hand_names[i])
+
+        self.torso_indices = torch.zeros(len(torso_names), dtype=torch.long, device=self.device, requires_grad=False)
+        for i in range(len(torso_names)):
+            self.torso_indices[i] = self.gym.find_actor_rigid_body_handle(self.envs[0], self.actor_handles[0], torso_names[i])
 
         self.penalised_contact_indices = torch.zeros(len(penalized_contact_names), dtype=torch.long, device=self.device, requires_grad=False)
         for i in range(len(penalized_contact_names)):

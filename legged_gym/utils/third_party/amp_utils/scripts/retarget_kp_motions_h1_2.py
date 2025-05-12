@@ -398,10 +398,10 @@ def retarget_pose(robot, default_pose, ref_joint_pos):
     tar_toe_pos_local = np.squeeze(
         np.concatenate(
             [
-                chain_foot_fl.forward_kinematics(joint_pose[13:17]).get_matrix()[:, :3, 3],
+                chain_foot_fl.forward_kinematics(joint_pose[13:17]).get_matrix()[:, :3, 3], # left hand
                 chain_foot_fr.forward_kinematics(joint_pose[17:21]).get_matrix()[
                     :, :3, 3
-                ],
+                ], # right hand
                 chain_foot_rl.forward_kinematics(joint_pose[:6]).get_matrix()[
                     :, :3, 3
                 ],
