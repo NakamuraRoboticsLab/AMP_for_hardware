@@ -11,14 +11,16 @@ INIT_POS = np.array([0, 0, 1.0]) # h1_2
 # INIT_ROT = np.array([0, 0, 0, 1.0])
 INIT_ROT = np.array([0, 0.70710678, 0, 0.70710678])
 
-SIM_TOE_JOINT_IDS = [42, 29, 11, 5] # FR FL HR HL
-SIM_HIP_JOINT_IDS = [20, 13, 6, 0]
+# SIM_TOE_JOINT_IDS = [42, 29, 11, 5] # FR FL HR HL
+# SIM_HIP_JOINT_IDS = [20, 13, 6, 0]
+SIM_TOE_JOINT_IDS = [29, 42, 5, 11] # FR FL HR HL
+SIM_HIP_JOINT_IDS = [13, 20, 0, 6]
 SIM_ROOT_OFFSET = np.array([0, 0, 0.2])
 SIM_TOE_OFFSET_LOCAL = [
-    np.array([0.0, -0.08, 0.08]),
     np.array([0.0, 0.08, 0.08]),
-    np.array([-0.05, -0.08, 0.05]),
-    np.array([-0.05, 0.08, 0.05])
+    np.array([0.0, -0.08, 0.08]),
+    np.array([-0.05, 0.08, 0.05]),
+    np.array([-0.05, -0.08, 0.05])
 ]
 TOE_HEIGHT_OFFSET = 0.1
 
