@@ -129,6 +129,10 @@ class LeggedRobot(BaseTask):
             policy_obs = self.obs_buf
         if self.privileged_obs_buf is not None:
             self.privileged_obs_buf = torch.clip(self.privileged_obs_buf, -clip_obs, clip_obs)
+
+        # # Pause after reset to observe initial posture
+        # if self.viewer is not None:
+        #     input("Simulation paused. Press Enter to continue...")
         
         return policy_obs, self.privileged_obs_buf, self.rew_buf, self.reset_buf, self.extras, reset_env_ids, terminal_amp_states
 

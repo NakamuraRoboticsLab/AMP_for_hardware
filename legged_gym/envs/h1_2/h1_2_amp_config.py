@@ -48,32 +48,61 @@ class H1_2AMPCfg( LeggedRobotCfg ):
 
     class init_state( LeggedRobotCfg.init_state ):
         pos = [0.0, 0.0, 1.05] # x,y,z [m]
+        rot = [0, 0.70710678, 0, 0.70710678]
+        # default_joint_angles = { # = target angles [rad] when action = 0.0
+        #     'left_hip_yaw_joint': 0,
+        #     'left_hip_roll_joint': 0,
+        #     'left_hip_pitch_joint': -0.16,
+        #     'left_knee_joint': 0.36,
+        #     'left_ankle_pitch_joint': -0.2,
+        #     'left_ankle_roll_joint': 0.0,
+
+        #     'right_hip_yaw_joint': 0,
+        #     'right_hip_roll_joint': 0,
+        #     'right_hip_pitch_joint': -0.16,
+        #     'right_knee_joint': 0.36,
+        #     'right_ankle_pitch_joint': -0.2,
+        #     'right_ankle_roll_joint': 0.0,
+
+        #     'torso_joint': 0,
+
+        #     'left_shoulder_pitch_joint': 0.4,
+        #     'left_shoulder_roll_joint': 0,
+        #     'left_shoulder_yaw_joint': 0,
+        #     'left_elbow_pitch_joint': 0.3,
+
+        #     'right_shoulder_pitch_joint': 0.4,
+        #     'right_shoulder_roll_joint': 0,
+        #     'right_shoulder_yaw_joint': 0,
+        #     'right_elbow_pitch_joint': 0.3,
+        # }
+
         default_joint_angles = { # = target angles [rad] when action = 0.0
-            'left_hip_yaw_joint': 0,
-            'left_hip_roll_joint': 0,
-            'left_hip_pitch_joint': -0.16,
-            'left_knee_joint': 0.36,
-            'left_ankle_pitch_joint': -0.2,
+            'left_hip_yaw_joint': 0.01876,
+            'left_hip_roll_joint': -2.17755,
+            'left_hip_pitch_joint': -0.29312,
+            'left_knee_joint': 1.86791,
+            'left_ankle_pitch_joint': -0.20947,
             'left_ankle_roll_joint': 0.0,
 
-            'right_hip_yaw_joint': 0,
-            'right_hip_roll_joint': 0,
-            'right_hip_pitch_joint': -0.16,
-            'right_knee_joint': 0.36,
-            'right_ankle_pitch_joint': -0.2,
+            'right_hip_yaw_joint': 0.21603,
+            'right_hip_roll_joint': -2.18404,
+            'right_hip_pitch_joint': -0.37079,
+            'right_knee_joint': 1.85460,
+            'right_ankle_pitch_joint': -0.21042,
             'right_ankle_roll_joint': 0.0,
 
             'torso_joint': 0,
 
-            'left_shoulder_pitch_joint': 0.4,
-            'left_shoulder_roll_joint': 0,
-            'left_shoulder_yaw_joint': 0,
-            'left_elbow_pitch_joint': 0.3,
+            'left_shoulder_pitch_joint': -0.73977,
+            'left_shoulder_roll_joint': -0.17053,
+            'left_shoulder_yaw_joint': -0.17430,
+            'left_elbow_pitch_joint': 0.05664,
 
-            'right_shoulder_pitch_joint': 0.4,
-            'right_shoulder_roll_joint': 0,
-            'right_shoulder_yaw_joint': 0,
-            'right_elbow_pitch_joint': 0.3,
+            'right_shoulder_pitch_joint': -0.73977,
+            'right_shoulder_roll_joint': -0.17053,
+            'right_shoulder_yaw_joint': -0.17430,
+            'right_elbow_pitch_joint': 0.05664,
         }
 
     class control( LeggedRobotCfg.control ):
@@ -96,14 +125,14 @@ class H1_2AMPCfg( LeggedRobotCfg ):
         foot_name = "ankle_roll"
         hand_name = "hand_base"
         penalize_contacts_on = ["hip", "knee"]
-        terminate_after_contacts_on = [
-            "torso_link", "left_shoulder_pitch_link", "left_shoulder_roll_link", "left_shoulder_yaw_link", "left_elbow_pitch_link", "left_elbow_roll_link",
-            "left_wrist_pitch_link", "left_wrist_yaw_link",
-            "right_shoulder_pitch_link", "right_shoulder_roll_link", "right_shoulder_yaw_link", "right_elbow_pitch_link", "right_elbow_roll_link", 
-            "right_wrist_pitch_link", "right_wrist_yaw_link", 
-            "left_hip_yaw_link", "left_hip_pitch_link", "left_hip_roll_link", "left_knee_link", 
-            "right_hip_yaw_link", "right_hip_pitch_link", "right_hip_roll_link", "right_knee_link"]
-        # terminate_after_contacts_on = ["pelvis"]
+        # terminate_after_contacts_on = [
+        #     "torso_link", "left_shoulder_pitch_link", "left_shoulder_roll_link", "left_shoulder_yaw_link", "left_elbow_pitch_link", "left_elbow_roll_link",
+        #     "left_wrist_pitch_link", "left_wrist_yaw_link",
+        #     "right_shoulder_pitch_link", "right_shoulder_roll_link", "right_shoulder_yaw_link", "right_elbow_pitch_link", "right_elbow_roll_link", 
+        #     "right_wrist_pitch_link", "right_wrist_yaw_link", 
+        #     "left_hip_yaw_link", "left_hip_pitch_link", "left_hip_roll_link", "left_knee_link", 
+        #     "right_hip_yaw_link", "right_hip_pitch_link", "right_hip_roll_link", "right_knee_link"]
+        terminate_after_contacts_on = ["pelvis"]
         self_collisions = 1 # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
         armature = 1e-3

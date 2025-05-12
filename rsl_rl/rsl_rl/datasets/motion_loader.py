@@ -164,25 +164,20 @@ class AMPLoader:
     
     #special for H1_2
     def reorder_from_pybullet_to_isaac(self, motion_data):
-        """Convert from PyBullet ordering to Isaac ordering.
-
-        Rearranges leg and joint order from PyBullet [FR, FL, RR, RL] to
-        IsaacGym order [FL, FR, RL, RR].
-        """
+ 
         root_pos = AMPLoader.get_root_pos_batch(motion_data)
         root_rot = AMPLoader.get_root_rot_batch(motion_data)
 
         # jp_fr, jp_fl, jp_rr, jp_rl = np.split(
         #     AMPLoader.get_joint_pose_batch(motion_data), 4, axis=1)
+        jp_rl = motion_data[:, AMPLoader.JOINT_POSE_START_IDX:AMPLoader.JOINT_POSE_START_IDX+6]
+        jp_rr = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+6:AMPLoader.JOINT_POSE_START_IDX+12]
+        jp_torso = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+12:AMPLoader.JOINT_POSE_START_IDX+13]
+        jp_fl = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+13:AMPLoader.JOINT_POSE_START_IDX+17]
+        jp_fr = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+17:AMPLoader.JOINT_POSE_START_IDX+21]
+        joint_pos = np.hstack([jp_rl, jp_rr, jp_torso, jp_fl, jp_fr])
 
-        jp_fr = motion_data[:, AMPLoader.JOINT_POSE_START_IDX:AMPLoader.JOINT_POSE_START_IDX+4]
-        jp_fl = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+4:AMPLoader.JOINT_POSE_START_IDX+8]
-        jp_torso = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+8:AMPLoader.JOINT_POSE_START_IDX+9]
-        jp_rr = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+9:AMPLoader.JOINT_POSE_START_IDX+15]
-        jp_rl = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+15:AMPLoader.JOINT_POSE_START_IDX+21]
-        joint_pos = np.hstack([jp_fl, jp_fr, jp_torso, jp_rl, jp_rr])
-
-        fp_fr, fp_fl, fp_rr, fp_rl = np.split(
+        fp_fl, fp_fr, fp_rl, fp_rr = np.split(
             AMPLoader.get_tar_toe_pos_local_batch(motion_data), 4, axis=1)
         foot_pos = np.hstack([fp_fl, fp_fr, fp_rl, fp_rr])
 
@@ -191,13 +186,12 @@ class AMPLoader:
 
         # jv_fr, jv_fl, jv_rr, jv_rl = np.split(
         #     AMPLoader.get_joint_vel_batch(motion_data), 4, axis=1)
-        
-        jv_fr = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX:AMPLoader.LINEAR_VEL_START_IDX+4]
-        jv_fl = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+4:AMPLoader.LINEAR_VEL_START_IDX+8]
-        jv_torso = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+8:AMPLoader.LINEAR_VEL_START_IDX+9]
-        jv_rr = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+9:AMPLoader.LINEAR_VEL_START_IDX+15]
-        jv_rl = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+15:AMPLoader.LINEAR_VEL_START_IDX+21]
-        joint_vel = np.hstack([jv_fl, jv_fr, jv_torso, jv_rl, jv_rr])
+        jv_rl = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX:AMPLoader.LINEAR_VEL_START_IDX+6]
+        jv_rr = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+6:AMPLoader.LINEAR_VEL_START_IDX+12]
+        jv_torso = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+12:AMPLoader.LINEAR_VEL_START_IDX+13]
+        jv_fl = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+13:AMPLoader.LINEAR_VEL_START_IDX+17]
+        jv_fr = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+17:AMPLoader.LINEAR_VEL_START_IDX+21]
+        joint_vel = np.hstack([jv_rl, jv_rr, jv_torso, jv_fl, jv_fr])
 
         fv_fr, fv_fl, fv_rr, fv_rl = np.split(
             AMPLoader.get_tar_toe_vel_local_batch(motion_data), 4, axis=1)
