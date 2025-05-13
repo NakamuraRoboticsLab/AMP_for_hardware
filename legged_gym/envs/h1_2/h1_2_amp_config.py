@@ -124,7 +124,12 @@ class H1_2AMPCfg( LeggedRobotCfg ):
         name = "h1_2"
         foot_name = "ankle_roll"
         hand_name = "hand_base"
-        penalize_contacts_on = ["hip", "knee"]
+        penalize_contacts_on = ["torso_link", "left_shoulder_pitch_link", "left_shoulder_roll_link", 
+                                "left_shoulder_yaw_link", "left_elbow_pitch_link", "left_elbow_roll_link",
+                                "right_shoulder_pitch_link", "right_shoulder_roll_link", "right_shoulder_yaw_link", 
+                                "right_elbow_pitch_link", "right_elbow_roll_link", 
+                                "left_hip_yaw_link", "left_hip_pitch_link", "left_hip_roll_link", "left_knee_link", 
+                                "right_hip_yaw_link", "right_hip_pitch_link", "right_hip_roll_link", "right_knee_link"]
         # terminate_after_contacts_on = [
         #     "torso_link", "left_shoulder_pitch_link", "left_shoulder_roll_link", "left_shoulder_yaw_link", "left_elbow_pitch_link", "left_elbow_roll_link",
         #     "left_wrist_pitch_link", "left_wrist_yaw_link",
