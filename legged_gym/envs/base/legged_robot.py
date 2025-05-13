@@ -49,6 +49,8 @@ from legged_gym.utils.helpers import class_to_dict
 from .legged_robot_config import LeggedRobotCfg
 from rsl_rl.datasets.motion_loader import AMPLoader
 
+import matplotlib.pyplot as plt
+
 
 COM_OFFSET = torch.tensor([0.012731, 0.002186, 0.000515])
 HIP_OFFSETS = torch.tensor([
@@ -768,6 +770,12 @@ class LeggedRobot(BaseTask):
         hand_positions = torch.cat((hand_positions, quat_rotate_inverse(torso_rot_quat, relative_hand_pos[:, 1, :])), dim=1)
         # 将 foot_positions 和 hand_positions 合并到同一个张量中
         all_positions = torch.cat((hand_positions, foot_positions), dim=1)
+
+        # print("foot pos: ")
+        # print(foot_positions)
+        # print("hand pos: ")
+        # print(hand_positions)
+        # input()
 
         return all_positions
 

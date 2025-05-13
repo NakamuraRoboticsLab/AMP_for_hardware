@@ -90,6 +90,12 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
+    <collision>
+      <origin xyz="0 0.06 0" rpy="1.5707963267948966192313216916398 0 0"/>
+      <geometry>
+        <cylinder radius="0.02" length="0.01"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="left_hip_roll_joint" type="revolute">
     <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -165,7 +171,7 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin xyz="-0.08 0.0 -0.04" rpy="1.5707963267948966192313216916398 0.0 0.0"/>
       <geometry>
         <cylinder radius="0.005" length="0.076"/>
@@ -187,6 +193,12 @@
       <origin xyz="0.027 0.038 -0.04" rpy="0.0 1.5707963267948966192313216916398 0.0"/>
       <geometry>
         <cylinder radius="0.005" length="0.21"/>
+      </geometry>
+    </collision> -->
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/left_ankle_roll_link.STL"/>
       </geometry>
     </collision>
   </link>
@@ -260,6 +272,12 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
+    <collision>
+      <origin xyz="0 -0.06 0" rpy="1.5707963267948966192313216916398 0 0"/>
+      <geometry>
+        <cylinder radius="0.02" length="0.01"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="right_hip_roll_joint" type="revolute">
     <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -335,7 +353,7 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin xyz="-0.08 0.0 -0.04" rpy="1.5707963267948966192313216916398 0.0 0.0"/>
       <geometry>
         <cylinder radius="0.005" length="0.076"/>
@@ -357,6 +375,12 @@
       <origin xyz="0.027 0.038 -0.04" rpy="0.0 1.5707963267948966192313216916398 0.0"/>
       <geometry>
         <cylinder radius="0.005" length="0.21"/>
+      </geometry>
+    </collision> -->
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/right_ankle_roll_link.STL"/>
       </geometry>
     </collision>
   </link>
@@ -508,6 +532,11 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
+    <collision>
+      <geometry>
+        <mesh filename="meshes/left_elbow_roll_link.STL"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="left_elbow_roll_joint" type="fixed">
     <origin xyz="0.121 -0.0329 -0.011" rpy="0 0 0"/>
@@ -674,6 +703,11 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
+    <collision>
+      <geometry>
+        <mesh filename="meshes/right_elbow_roll_link.STL"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="right_elbow_roll_joint" type="fixed">
     <origin xyz="0.121 0.0329 -0.011" rpy="0 0 0"/>
@@ -778,6 +812,12 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/L_hand_base_link.STL"/>
+      </geometry>
+    </collision>
   </link>
   <link name="L_thumb_proximal_base">
     <inertial>
@@ -1083,6 +1123,12 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/R_hand_base_link.STL"/>
+      </geometry>
+    </collision>
   </link>
   <link name="R_thumb_proximal_base">
     <inertial>

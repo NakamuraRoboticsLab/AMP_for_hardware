@@ -155,7 +155,7 @@ class H1_2AMPCfg( LeggedRobotCfg ):
         damping_multiplier_range = [0.9, 1.1]
 
     class noise:
-        add_noise = True
+        add_noise = False
         noise_level = 1.0 # scales other values
         class noise_scales:
             dof_pos = 0.03
@@ -175,7 +175,7 @@ class H1_2AMPCfg( LeggedRobotCfg ):
             lin_vel_z = 0.0
             ang_vel_xy = 0.0
             orientation = 0.0
-            torques = 0.0
+            torques = 0.0005 * 1. / (.005 * 6)
             dof_vel = 0.0
             dof_acc = 0.0
             base_height = 0.0 
