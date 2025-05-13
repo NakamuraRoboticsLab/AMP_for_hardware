@@ -123,7 +123,7 @@ class H1_2AMPCfg( LeggedRobotCfg ):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/h1_2/h1_2_simplified.urdf'
         name = "h1_2"
         foot_name = "ankle_roll"
-        hand_name = "hand_base"
+        hand_name = "elbow_pitch"
         penalize_contacts_on = ["torso_link", "left_shoulder_pitch_link", "left_shoulder_roll_link", 
                                 "left_shoulder_yaw_link", "left_elbow_pitch_link", "left_elbow_roll_link",
                                 "right_shoulder_pitch_link", "right_shoulder_roll_link", "right_shoulder_yaw_link", 

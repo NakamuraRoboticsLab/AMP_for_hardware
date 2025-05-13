@@ -744,10 +744,6 @@ class LeggedRobot(BaseTask):
     def foot_positions_in_base_frame(self, foot_angles):
         # foot_positions = torch.zeros_like(foot_angles)
         all_positions = torch.zeros(self.num_envs, 12, dtype=torch.float, device=self.device)
-
-        # print(self.root_states.shape)
-        # print(all_positions.shape)
-        # input()
         
         feet_pos = self.rigid_body_state_view[:, self.feet_indices, :3]
         hand_pos = self.rigid_body_state_view[:, self.hand_indices, :3]
@@ -885,8 +881,7 @@ class LeggedRobot(BaseTask):
         self.num_bodies = len(body_names)
         self.num_dofs = len(self.dof_names)
         feet_names = [s for s in body_names if self.cfg.asset.foot_name in s]
-        # hand_names = [s for s in body_names if self.cfg.asset.hand_name in s]
-        hand_names = ["L_hand_base_link", "R_hand_base_link"]
+        hand_names = [s for s in body_names if self.cfg.asset.hand_name in s]
         torso_names = ["torso_link"]
         penalized_contact_names = []
         for name in self.cfg.asset.penalize_contacts_on:

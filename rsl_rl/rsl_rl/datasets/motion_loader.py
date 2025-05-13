@@ -11,6 +11,7 @@ from rsl_rl.utils import utils
 from rsl_rl.datasets import pose3d
 from rsl_rl.datasets import motion_util
 
+import matplotlib.pyplot as plt
 
 class AMPLoader:
 
@@ -161,7 +162,7 @@ class AMPLoader:
     #     return np.hstack(
     #         [root_pos, root_rot, joint_pos, foot_pos, lin_vel, ang_vel,
     #          joint_vel, foot_vel])
-    
+
     #special for H1_2
     def reorder_from_pybullet_to_isaac(self, motion_data):
  
@@ -180,6 +181,56 @@ class AMPLoader:
         fp_fl, fp_fr, fp_rl, fp_rr = np.split(
             AMPLoader.get_tar_toe_pos_local_batch(motion_data), 4, axis=1)
         foot_pos = np.hstack([fp_fl, fp_fr, fp_rl, fp_rr])
+
+        # frames = np.arange(fp_fl.shape[0])  # 帧数
+        # # 创建一个 2x2 的子图布局
+        # fig, axs = plt.subplots(2, 2, figsize=(12, 10))
+
+        # # 绘制左前脚 (fp_fl)
+        # axs[0, 0].plot(frames, fp_fl[:, 0], label="fp_fl_x", color="r")  # x 坐标
+        # axs[0, 0].plot(frames, fp_fl[:, 1], label="fp_fl_y", color="g")  # y 坐标
+        # axs[0, 0].plot(frames, fp_fl[:, 2], label="fp_fl_z", color="b")  # z 坐标
+        # axs[0, 0].set_title("Left Front Foot Position (fp_fl)")
+        # axs[0, 0].set_xlabel("Frame")
+        # axs[0, 0].set_ylabel("Position Value")
+        # axs[0, 0].legend()
+        # axs[0, 0].grid()
+
+        # # 绘制右前脚 (fp_fr)
+        # axs[0, 1].plot(frames, fp_fr[:, 0], label="fp_fr_x", color="r")  # x 坐标
+        # axs[0, 1].plot(frames, fp_fr[:, 1], label="fp_fr_y", color="g")  # y 坐标
+        # axs[0, 1].plot(frames, fp_fr[:, 2], label="fp_fr_z", color="b")  # z 坐标
+        # axs[0, 1].set_title("Right Front Foot Position (fp_fr)")
+        # axs[0, 1].set_xlabel("Frame")
+        # axs[0, 1].set_ylabel("Position Value")
+        # axs[0, 1].legend()
+        # axs[0, 1].grid()
+
+        # # 绘制左后脚 (fp_rl)
+        # axs[1, 0].plot(frames, fp_rl[:, 0], label="fp_rl_x", color="r")  # x 坐标
+        # axs[1, 0].plot(frames, fp_rl[:, 1], label="fp_rl_y", color="g")  # y 坐标
+        # axs[1, 0].plot(frames, fp_rl[:, 2], label="fp_rl_z", color="b")  # z 坐标
+        # axs[1, 0].set_title("Left Rear Foot Position (fp_rl)")
+        # axs[1, 0].set_xlabel("Frame")
+        # axs[1, 0].set_ylabel("Position Value")
+        # axs[1, 0].legend()
+        # axs[1, 0].grid()
+
+        # # 绘制右后脚 (fp_rr)
+        # axs[1, 1].plot(frames, fp_rr[:, 0], label="fp_rr_x", color="r")  # x 坐标
+        # axs[1, 1].plot(frames, fp_rr[:, 1], label="fp_rr_y", color="g")  # y 坐标
+        # axs[1, 1].plot(frames, fp_rr[:, 2], label="fp_rr_z", color="b")  # z 坐标
+        # axs[1, 1].set_title("Right Rear Foot Position (fp_rr)")
+        # axs[1, 1].set_xlabel("Frame")
+        # axs[1, 1].set_ylabel("Position Value")
+        # axs[1, 1].legend()
+        # axs[1, 1].grid()
+
+        # # 调整子图布局
+        # plt.tight_layout()
+        # plt.show()
+
+        # input()
 
         lin_vel = AMPLoader.get_linear_vel_batch(motion_data)
         ang_vel = AMPLoader.get_angular_vel_batch(motion_data)
