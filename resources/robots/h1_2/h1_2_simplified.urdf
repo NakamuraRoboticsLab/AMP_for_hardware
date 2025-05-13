@@ -44,6 +44,12 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
+    <collision>
+      <origin xyz="0.02 0 0" rpy="0 1.5707963267948966192313216916398 0"/>
+      <geometry>
+        <cylinder radius="0.01" length="0.02"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="left_hip_yaw_joint" type="revolute">
     <origin xyz="0 0.0875 -0.1632" rpy="0 0 0"/>
@@ -67,6 +73,12 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
+    <collision>
+      <origin xyz="0 0 -0.2" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.02" length="0.2"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="left_hip_pitch_joint" type="revolute">
     <origin xyz="0 0.0755 0" rpy="0 0 0"/>
@@ -226,6 +238,12 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
+    <collision>
+      <origin xyz="0.02 0 0" rpy="0 1.5707963267948966192313216916398 0"/>
+      <geometry>
+        <cylinder radius="0.01" length="0.02"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="right_hip_yaw_joint" type="revolute">
     <origin xyz="0 -0.0875 -0.1632" rpy="0 0 0"/>
@@ -249,6 +267,12 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
+    <collision>
+      <origin xyz="0 0 -0.2" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.02" length="0.2"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="right_hip_pitch_joint" type="revolute">
     <origin xyz="0 -0.0755 0" rpy="0 0 0"/>
@@ -439,6 +463,12 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/left_shoulder_pitch_link.STL"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="left_shoulder_pitch_joint" type="revolute">
     <origin xyz="0 0.14806 0.42333" rpy="0.2618 0 0"/>
@@ -609,6 +639,12 @@
         <color rgba="0.1 0.1 0.1 1"/>
       </material>
     </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/right_shoulder_pitch_link.STL"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="right_shoulder_pitch_joint" type="revolute">
     <origin xyz="0 -0.14806 0.42333" rpy="-0.2618 0 0"/>

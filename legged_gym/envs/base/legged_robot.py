@@ -187,7 +187,10 @@ class LeggedRobot(BaseTask):
         """
         self.reset_buf = torch.any(torch.norm(self.contact_forces[:, self.termination_contact_indices, :], dim=-1) > 1., dim=1)
         self.time_out_buf = self.episode_length_buf > self.max_episode_length # no terminal reward for time-outs
+        height_cutoff = self.root_states[:, 2] > 1.5
+
         self.reset_buf |= self.time_out_buf
+        self.reset_buf |= height_cutoff
 
     def reset_idx(self, env_ids):
         """ Reset some environments.
