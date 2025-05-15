@@ -40,10 +40,10 @@ JOINT_DAMPING = [0.01, 0.01, 0.01,
 
 FORWARD_DIR_OFFSET = np.array([0, 0, 0])
 
-FR_FOOT_NAME = "right_hand_keypoint_link"
-FL_FOOT_NAME = "left_hand_keypoint_link"
-HR_FOOT_NAME = "right_foot_keypoint_link"
-HL_FOOT_NAME = "left_foot_keypoint_link"
+FR_FOOT_NAME = "right_elbow_link"
+FL_FOOT_NAME = "left_elbow_link"
+HR_FOOT_NAME = "right_ankle_link"
+HL_FOOT_NAME = "left_ankle_link"
 TORSO_NAME = "torso_link"
 
 MOCAP_MOTIONS = [
