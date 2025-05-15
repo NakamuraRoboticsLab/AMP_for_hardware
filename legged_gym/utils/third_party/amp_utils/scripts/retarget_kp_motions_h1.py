@@ -362,7 +362,7 @@ def retarget_pose(robot, default_pose, ref_joint_pos):
         toe_offset_world = pose3d.QuaternionRotatePoint(toe_offset_local, heading_rot)
 
         ref_hip_toe_delta = ref_toe_pos - ref_hip_pos
-        ref_hip_toe_delta = (ref_toe_pos - ref_hip_pos) * 1.1  # 增加 10% 的距离
+        # ref_hip_toe_delta = (ref_toe_pos - ref_hip_pos) * 1.1  # 增加 10% 的距离
         sim_tar_toe_pos = sim_hip_pos + ref_hip_toe_delta
         sim_tar_toe_pos[2] = ref_toe_pos[2]
         sim_tar_toe_pos += toe_offset_world
@@ -398,10 +398,10 @@ def retarget_pose(robot, default_pose, ref_joint_pos):
     tar_toe_pos_local = np.squeeze(
         np.concatenate(
             [
-                chain_foot_fl.forward_kinematics(joint_pose[11:15]).get_matrix()[:, :3, 3],
+                chain_foot_fl.forward_kinematics(joint_pose[11:15]).get_matrix()[:, :3, 3], # left hand
                 chain_foot_fr.forward_kinematics(joint_pose[15:19]).get_matrix()[
                     :, :3, 3
-                ],
+                ], # right hand
                 chain_foot_rl.forward_kinematics(joint_pose[:5]).get_matrix()[
                     :, :3, 3
                 ],
