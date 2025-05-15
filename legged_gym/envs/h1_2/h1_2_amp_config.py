@@ -32,6 +32,7 @@ import glob
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
 MOTION_FILES = glob.glob('datasets/mocap_motions/h1_2/*')
+# MOTION_FILES = glob.glob('datasets/mocap_motions/h1_2/pace0.txt')
 
 
 class H1_2AMPCfg( LeggedRobotCfg ):
@@ -78,11 +79,11 @@ class H1_2AMPCfg( LeggedRobotCfg ):
         # }
 
         default_joint_angles = { # = target angles [rad] when action = 0.0
-            'left_hip_yaw_joint': 0.01876,
-            'left_hip_roll_joint': -2.17755,
-            'left_hip_pitch_joint': -0.29312,
-            'left_knee_joint': 1.86791,
-            'left_ankle_pitch_joint': -0.20947,
+            'left_hip_yaw_joint': 0.21603,
+            'left_hip_roll_joint': -2.18404,
+            'left_hip_pitch_joint': -0.37079,
+            'left_knee_joint': 1.85460,
+            'left_ankle_pitch_joint': -0.21042,
             'left_ankle_roll_joint': 0.0,
 
             'right_hip_yaw_joint': 0.21603,
@@ -108,7 +109,7 @@ class H1_2AMPCfg( LeggedRobotCfg ):
     class control( LeggedRobotCfg.control ):
         # PD Drive parameters:
         control_type = 'P'
-        stiffness = {'joint': 200.}  # [N*m/rad]
+        stiffness = {'joint': 300.}  # [N*m/rad]
         damping = {'joint': 2.5}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
@@ -143,14 +144,14 @@ class H1_2AMPCfg( LeggedRobotCfg ):
         armature = 1e-3
 
     class domain_rand:
-        randomize_friction = True
+        randomize_friction = False
         friction_range = [0.25, 1.75]
-        randomize_base_mass = True
+        randomize_base_mass = False
         added_mass_range = [-1., 1.]
-        push_robots = True
+        push_robots = False
         push_interval_s = 15
         max_push_vel_xy = 1.0
-        randomize_gains = True
+        randomize_gains = False
         stiffness_multiplier_range = [0.9, 1.1]
         damping_multiplier_range = [0.9, 1.1]
 
@@ -171,11 +172,11 @@ class H1_2AMPCfg( LeggedRobotCfg ):
         class scales( LeggedRobotCfg.rewards.scales ):
             termination = 0.0
             tracking_lin_vel = 1.5 * 1. / (.005 * 6)
-            tracking_ang_vel = 0.5 * 1. / (.005 * 6)
+            tracking_ang_vel = 0.0 * 1. / (.005 * 6)
             lin_vel_z = 0.0
             ang_vel_xy = 0.0
             orientation = 0.0
-            torques = 0.0005 * 1. / (.005 * 6)
+            torques = 0.0
             dof_vel = 0.0
             dof_acc = 0.0
             base_height = 0.0 
@@ -216,7 +217,7 @@ class H1_2AMPCfgPPO( LeggedRobotCfgPPO ):
         amp_reward_coef = 2.0
         amp_motion_files = MOTION_FILES
         amp_num_preload_transitions = 2000000
-        amp_task_reward_lerp = 0.3
+        amp_task_reward_lerp = 0.01
         amp_discr_hidden_dims = [1024, 512]
 
         # min_normalized_std = [0.05, 0.02, 0.05] * 4
