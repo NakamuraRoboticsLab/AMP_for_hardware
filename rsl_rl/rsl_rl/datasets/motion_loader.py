@@ -17,11 +17,11 @@ class AMPLoader:
 
     POS_SIZE = 3
     ROT_SIZE = 4
-    JOINT_POS_SIZE = 21
+    JOINT_POS_SIZE = 19
     TAR_TOE_POS_LOCAL_SIZE = 12
     LINEAR_VEL_SIZE = 3
     ANGULAR_VEL_SIZE = 3
-    JOINT_VEL_SIZE = 21
+    JOINT_VEL_SIZE = 19
     TAR_TOE_VEL_LOCAL_SIZE = 12
 
     ROOT_POS_START_IDX = 0
@@ -171,11 +171,11 @@ class AMPLoader:
 
         # jp_fr, jp_fl, jp_rr, jp_rl = np.split(
         #     AMPLoader.get_joint_pose_batch(motion_data), 4, axis=1)
-        jp_rl = motion_data[:, AMPLoader.JOINT_POSE_START_IDX:AMPLoader.JOINT_POSE_START_IDX+6]
-        jp_rr = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+6:AMPLoader.JOINT_POSE_START_IDX+12]
-        jp_torso = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+12:AMPLoader.JOINT_POSE_START_IDX+13]
-        jp_fl = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+13:AMPLoader.JOINT_POSE_START_IDX+17]
-        jp_fr = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+17:AMPLoader.JOINT_POSE_START_IDX+21]
+        jp_rl = motion_data[:, AMPLoader.JOINT_POSE_START_IDX:AMPLoader.JOINT_POSE_START_IDX+5]
+        jp_rr = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+5:AMPLoader.JOINT_POSE_START_IDX+10]
+        jp_torso = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+10:AMPLoader.JOINT_POSE_START_IDX+11]
+        jp_fl = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+11:AMPLoader.JOINT_POSE_START_IDX+15]
+        jp_fr = motion_data[:, AMPLoader.JOINT_POSE_START_IDX+15:AMPLoader.JOINT_POSE_START_IDX+19]
         joint_pos = np.hstack([jp_rl, jp_rr, jp_torso, jp_fl, jp_fr])
 
         fp_fl, fp_fr, fp_rl, fp_rr = np.split(
@@ -237,11 +237,11 @@ class AMPLoader:
 
         # jv_fr, jv_fl, jv_rr, jv_rl = np.split(
         #     AMPLoader.get_joint_vel_batch(motion_data), 4, axis=1)
-        jv_rl = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX:AMPLoader.LINEAR_VEL_START_IDX+6]
-        jv_rr = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+6:AMPLoader.LINEAR_VEL_START_IDX+12]
-        jv_torso = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+12:AMPLoader.LINEAR_VEL_START_IDX+13]
-        jv_fl = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+13:AMPLoader.LINEAR_VEL_START_IDX+17]
-        jv_fr = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+17:AMPLoader.LINEAR_VEL_START_IDX+21]
+        jv_rl = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX:AMPLoader.LINEAR_VEL_START_IDX+5]
+        jv_rr = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+5:AMPLoader.LINEAR_VEL_START_IDX+10]
+        jv_torso = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+10:AMPLoader.LINEAR_VEL_START_IDX+11]
+        jv_fl = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+11:AMPLoader.LINEAR_VEL_START_IDX+15]
+        jv_fr = motion_data[:, AMPLoader.LINEAR_VEL_START_IDX+15:AMPLoader.LINEAR_VEL_START_IDX+19]
         joint_vel = np.hstack([jv_rl, jv_rr, jv_torso, jv_fl, jv_fr])
 
         fv_fr, fv_fl, fv_rr, fv_rl = np.split(

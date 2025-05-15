@@ -47,13 +47,36 @@ from legged_gym.utils.terrain import Terrain
 from legged_gym.utils.math import quat_apply_yaw, wrap_to_pi, torch_rand_sqrt_float
 from legged_gym.utils.helpers import class_to_dict
 # from .legged_robot_config import LeggedRobotCfg
-from legged_gym.envs.h1_2.h1_2_amp_config import H1_2AMPCfg
+# from legged_gym.envs.h1_2.h1_2_amp_config import H1_2AMPCfg
+from legged_gym.envs.h1.h1_amp_config import H1AMPCfg
 from rsl_rl.datasets.motion_loader import AMPLoader
 
 import matplotlib.pyplot as plt
 
+def euler_from_quaternion(quat_angle):
+        """
+        Convert a quaternion into euler angles (roll, pitch, yaw)
+        roll is rotation around x in radians (counterclockwise)
+        pitch is rotation around y in radians (counterclockwise)
+        yaw is rotation around z in radians (counterclockwise)
+        """
+        x = quat_angle[:,0]; y = quat_angle[:,1]; z = quat_angle[:,2]; w = quat_angle[:,3]
+        t0 = +2.0 * (w * x + y * z)
+        t1 = +1.0 - 2.0 * (x * x + y * y)
+        roll_x = torch.atan2(t0, t1)
+     
+        t2 = +2.0 * (w * y - z * x)
+        t2 = torch.clip(t2, -1, 1)
+        pitch_y = torch.asin(t2)
+     
+        t3 = +2.0 * (w * z + x * y)
+        t4 = +1.0 - 2.0 * (y * y + z * z)
+        yaw_z = torch.atan2(t3, t4)
+     
+        return roll_x, pitch_y, yaw_z # in radians
+
 class LeggedRobot(BaseTask):
-    def __init__(self, cfg: H1_2AMPCfg, sim_params, physics_engine, sim_device, headless):
+    def __init__(self, cfg: H1AMPCfg, sim_params, physics_engine, sim_device, headless):
         """ Parses the provided config file,
             calls create_sim() (which creates, simulation, terrain and environments),
             initilizes pytorch buffers used during training
@@ -155,6 +178,8 @@ class LeggedRobot(BaseTask):
         self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.root_states[:, 10:13])
         self.projected_gravity[:] = quat_rotate_inverse(self.base_quat, self.gravity_vec)
 
+        self.roll, self.pitch, self.yaw = euler_from_quaternion(self.base_quat)
+
         self._post_physics_step_callback()
 
         # compute observations, rewards, resets, ...
@@ -181,8 +206,13 @@ class LeggedRobot(BaseTask):
         self.time_out_buf = self.episode_length_buf > self.max_episode_length # no terminal reward for time-outs
         height_cutoff = self.root_states[:, 2] > 1.5
 
+        roll_cutoff = torch.abs(self.roll) > 1.5
+        pitch_cutoff = torch.abs(self.pitch) > 1.5
+
         self.reset_buf |= self.time_out_buf
         self.reset_buf |= height_cutoff
+        # self.reset_buf |= roll_cutoff
+        # self.reset_buf |= pitch_cutoff
 
     def reset_idx(self, env_ids):
         """ Reset some environments.
@@ -715,6 +745,9 @@ class LeggedRobot(BaseTask):
         torso_rot = self.rigid_body_state_view[:, self.torso_indices, 3:7]
         # 提取 torso_rot 的四元数部分
         torso_rot_quat = torso_rot[:, 0, :4]
+
+        # print("feet_indices:", self.feet_indices)
+        # print("hand_indices:", self.hand_indices)
 
         # 获取基座位置和方向
         base_pos = self.root_states[:, :3].unsqueeze(1)  # [num_envs, 1, 3]
